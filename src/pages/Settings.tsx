@@ -4,7 +4,7 @@ import Sidebar from '@/components/Sidebar';
 import { Sun, Moon, User, Settings as SettingsIcon, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import useLocalStorage from '@/hooks/useLocalStorage';
 
 const Settings = () => {
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'light');
