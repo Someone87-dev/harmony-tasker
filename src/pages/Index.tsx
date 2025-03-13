@@ -21,10 +21,14 @@ const Index = () => {
             </div>
           </header>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pb-12 animate-fade-in">
-            <TaskManager />
-            <Notes />
-            <div className="col-span-2 md:col-span-1 grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12 animate-fade-in">
+            <div className="col-span-1 md:col-span-2 lg:col-span-1">
+              <TaskManager />
+            </div>
+            <div className="col-span-1 md:col-span-2 lg:col-span-1">
+              <Notes />
+            </div>
+            <div className="col-span-1 md:col-span-2 lg:col-span-1 grid grid-cols-1 gap-6">
               <ExpenseTracker />
               <HabitTracker />
               <PomodoroTimer />

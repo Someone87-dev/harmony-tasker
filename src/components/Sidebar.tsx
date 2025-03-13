@@ -9,23 +9,30 @@ import {
   Swords, 
   BarChart4, 
   Settings,
-  X
+  X,
+  User
 } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const menuItems = [
-    { name: 'Dashboard', icon: <Home size={20} /> },
-    { name: 'Tasks', icon: <CheckCircle size={20} /> },
-    { name: 'Notes', icon: <FileText size={20} /> },
-    { name: 'Expenses', icon: <BarChart4 size={20} /> },
-    { name: 'Habits', icon: <Swords size={20} /> },
-    { name: 'Focus Timer', icon: <Clock size={20} /> },
+    { name: 'Dashboard', icon: <Home size={20} />, path: '/' },
+    { name: 'Tasks', icon: <CheckCircle size={20} />, path: '/tasks' },
+    { name: 'Notes', icon: <FileText size={20} />, path: '/notes' },
+    { name: 'Expenses', icon: <BarChart4 size={20} />, path: '/expenses' },
+    { name: 'Habits', icon: <Swords size={20} />, path: '/habits' },
+    { name: 'Focus Timer', icon: <Clock size={20} />, path: '/focus' },
   ];
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -38,43 +45,56 @@ const Sidebar = () => {
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      <div className={`fixed inset-y-0 left-0 z-40 w-64 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}>
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:translate-x-0 md:w-16 md:hover:w-64 group`}>
         <div className="glass-panel h-full flex flex-col">
-          <div className="p-6 border-b border-border/50">
-            <h1 className="text-xl font-semibold tracking-tight">FocusFlow Pro</h1>
+          <div className="p-6 border-b border-border/50 flex items-center gap-3">
+            <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center text-white font-bold">F</div>
+            <h1 className="text-xl font-semibold tracking-tight md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">FocusFlow Pro</h1>
           </div>
           
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-4 overflow-y-auto">
             <ul className="space-y-1">
               {menuItems.map((item) => (
                 <li key={item.name}>
-                  <a 
-                    href="#" 
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-white/50 transition-colors duration-200 focus-ring"
+                  <Link 
+                    to={item.path}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-white/50 transition-colors duration-200 focus-ring ${isActive(item.path) ? 'bg-primary/10 text-primary' : ''}`}
                   >
-                    <span className="text-primary">{item.icon}</span>
-                    <span className="font-medium">{item.name}</span>
-                  </a>
+                    <span className={`text-primary flex-shrink-0 ${isActive(item.path) ? 'text-primary' : 'text-muted-foreground'}`}>{item.icon}</span>
+                    <span className={`font-medium md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 ${isActive(item.path) ? 'text-primary' : ''}`}>{item.name}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
           
           <div className="p-4 border-t border-border/50">
-            <a 
-              href="#" 
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-white/50 transition-colors duration-200 focus-ring"
+            <Link 
+              to="/settings"
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-white/50 transition-colors duration-200 focus-ring ${isActive('/settings') ? 'bg-primary/10 text-primary' : ''}`}
             >
-              <span className="text-primary"><Settings size={20} /></span>
-              <span className="font-medium">Settings</span>
-            </a>
+              <span className={`text-primary flex-shrink-0 ${isActive('/settings') ? 'text-primary' : 'text-muted-foreground'}`}><Settings size={20} /></span>
+              <span className={`font-medium md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 ${isActive('/settings') ? 'text-primary' : ''}`}>Settings</span>
+            </Link>
+            
+            <div className="mt-4 flex items-center gap-3 px-4 py-3">
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <User size={16} className="text-primary" />
+              </div>
+              <div className="md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                <p className="text-sm font-medium">John Doe</p>
+                <p className="text-xs text-muted-foreground">john@example.com</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       
+      <div className="md:pl-16 transition-all duration-300"></div>
+      
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/5 backdrop-blur-sm z-30"
+          className="fixed inset-0 bg-black/5 backdrop-blur-sm z-30 md:hidden"
           onClick={toggleSidebar}
           aria-hidden="true"
         />
