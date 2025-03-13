@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Clock, Play, Pause, SkipForward, Settings as SettingsIcon } from 'lucide-react';
 import DashboardCard from '../ui/DashboardCard';
@@ -56,7 +55,6 @@ const PomodoroTimer = () => {
       clearInterval(timerRef.current);
     }
     
-    // Play sound
     const audio = new Audio('/notification.mp3');
     audio.play().catch(e => console.log('Audio play failed:', e));
     
@@ -110,7 +108,6 @@ const PomodoroTimer = () => {
   const saveSettings = () => {
     setSettings(settingsForm);
     
-    // Reset timer with new settings
     if (mode === 'work') {
       setTimeLeft(settingsForm.workDuration * 60);
     } else if (mode === 'break') {
@@ -323,14 +320,16 @@ const PomodoroTimer = () => {
         </div>
       )}
       
-      <style jsx>{`
-        .stop-work-start { stop-color: #3b82f6; }
-        .stop-work-end { stop-color: #4f46e5; }
-        .stop-break-start { stop-color: #10b981; }
-        .stop-break-end { stop-color: #059669; }
-        .stop-longBreak-start { stop-color: #f59e0b; }
-        .stop-longBreak-end { stop-color: #eab308; }
-      `}</style>
+      <style>
+        {`
+          .stop-work-start { stop-color: #3b82f6; }
+          .stop-work-end { stop-color: #4f46e5; }
+          .stop-break-start { stop-color: #10b981; }
+          .stop-break-end { stop-color: #059669; }
+          .stop-longBreak-start { stop-color: #f59e0b; }
+          .stop-longBreak-end { stop-color: #eab308; }
+        `}
+      </style>
     </DashboardCard>
   );
 };
