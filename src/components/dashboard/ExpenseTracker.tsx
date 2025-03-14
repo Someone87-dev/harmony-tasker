@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import DashboardCard from '../ui/DashboardCard';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { Expense } from '@/types';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const CATEGORIES = [
   'Food & Drinks',
@@ -36,9 +37,9 @@ const ExpenseTracker = () => {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [description, setDescription] = useState('');
-  const [currency, setCurrency] = useLocalStorage('focusflow-currency', CURRENCIES[0].code);
+  const [currencyCode, setCurrencyCode] = useLocalStorage('focusflow-currency', 'USD');
   
-  const currentCurrency = CURRENCIES.find(c => c.code === currency) || CURRENCIES[0];
+  const currentCurrency = CURRENCIES.find(c => c.code === currencyCode) || CURRENCIES[0];
 
   const addExpense = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +53,7 @@ const ExpenseTracker = () => {
       category,
       description,
       date: new Date(),
-      currency
+      currency: currencyCode
     };
     
     setExpenses([newExpense, ...expenses]);
@@ -81,7 +82,7 @@ const ExpenseTracker = () => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency,
+      currency: currencyCode,
       minimumFractionDigits: 2
     }).format(value);
   };
@@ -149,8 +150,8 @@ const ExpenseTracker = () => {
           <div className="flex items-center">
             <label className="mr-2 text-sm font-medium">Currency:</label>
             <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
+              value={currencyCode}
+              onChange={(e) => setCurrencyCode(e.target.value)}
               className="px-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
             >
               {CURRENCIES.map(curr => (
@@ -200,37 +201,39 @@ const ExpenseTracker = () => {
         {/* Recent Expenses */}
         <div>
           <h3 className="font-medium mb-2">Recent Expenses</h3>
-          <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
-            {expenses.length === 0 ? (
-              <p className="text-center py-4 text-muted-foreground">
-                No expenses yet. Add some expenses to get started!
-              </p>
-            ) : (
-              expenses.slice(0, 5).map(expense => (
-                <div 
-                  key={expense.id}
-                  className="px-4 py-3 rounded-lg border border-border bg-white/80 dark:bg-gray-700/50 flex items-center justify-between"
-                >
-                  <div>
-                    <p className="font-medium">{expense.description || expense.category}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {expense.category} • {new Date(expense.date).toLocaleDateString()}
-                    </p>
+          <ScrollArea className="h-[200px] rounded-md border border-border bg-white/80 dark:bg-gray-700/50">
+            <div className="space-y-2 p-4">
+              {expenses.length === 0 ? (
+                <p className="text-center py-4 text-muted-foreground">
+                  No expenses yet. Add some expenses to get started!
+                </p>
+              ) : (
+                expenses.slice(0, 5).map(expense => (
+                  <div 
+                    key={expense.id}
+                    className="px-4 py-3 rounded-lg border border-border bg-white/80 dark:bg-gray-700/50 flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="font-medium">{expense.description || expense.category}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {expense.category} • {new Date(expense.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium">{formatCurrency(expense.amount)}</span>
+                      <button
+                        onClick={() => deleteExpense(expense.id)}
+                        className="text-muted-foreground hover:text-destructive focus-ring rounded"
+                        aria-label="Delete expense"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="font-medium">{formatCurrency(expense.amount)}</span>
-                    <button
-                      onClick={() => deleteExpense(expense.id)}
-                      className="text-muted-foreground hover:text-destructive focus-ring rounded"
-                      aria-label="Delete expense"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              )}
+            </div>
+          </ScrollArea>
         </div>
       </div>
     </DashboardCard>

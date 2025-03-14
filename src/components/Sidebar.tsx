@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useLocalStorage from '@/hooks/useLocalStorage';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -69,21 +70,23 @@ const Sidebar = () => {
             <h1 className="text-xl font-semibold tracking-tight md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">FocusFlow Pro</h1>
           </div>
           
-          <nav className="flex-1 p-4 overflow-y-auto">
-            <ul className="space-y-1">
-              {menuItems.map((item) => (
-                <li key={item.name}>
-                  <Link 
-                    to={item.path}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-white/50 dark:hover:bg-gray-800/50 transition-colors duration-200 focus-ring ${isActive(item.path) ? 'bg-primary/10 text-primary dark:bg-primary/20' : ''}`}
-                  >
-                    <span className={`flex-shrink-0 ${isActive(item.path) ? 'text-primary' : 'text-muted-foreground'}`}>{item.icon}</span>
-                    <span className={`font-medium md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 ${isActive(item.path) ? 'text-primary' : ''}`}>{item.name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <ScrollArea className="flex-1 sidebar-scrollbar">
+            <div className="p-4">
+              <ul className="space-y-1">
+                {menuItems.map((item) => (
+                  <li key={item.name}>
+                    <Link 
+                      to={item.path}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-white/50 dark:hover:bg-gray-800/50 transition-colors duration-200 focus-ring ${isActive(item.path) ? 'bg-primary/10 text-primary dark:bg-primary/20' : ''}`}
+                    >
+                      <span className={`flex-shrink-0 ${isActive(item.path) ? 'text-primary' : 'text-muted-foreground'}`}>{item.icon}</span>
+                      <span className={`font-medium md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 ${isActive(item.path) ? 'text-primary' : ''}`}>{item.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </ScrollArea>
           
           <div className="p-4 border-t border-border/50 dark:border-white/10">
             <Link 
