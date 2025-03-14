@@ -6,6 +6,8 @@ import DashboardCard from '../ui/DashboardCard';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { Expense } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const CATEGORIES = [
   'Food & Drinks',
@@ -38,6 +40,7 @@ const ExpenseTracker = () => {
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [description, setDescription] = useState('');
   const [currencyCode, setCurrencyCode] = useLocalStorage<string>('focusflow-currency', 'USD');
+  const isMobile = useIsMobile();
   
   const currentCurrency = CURRENCIES.find(c => c.code === currencyCode) || CURRENCIES[0];
 
@@ -96,8 +99,8 @@ const ExpenseTracker = () => {
       icon={<BarChart4 />}
       className="col-span-2 md:col-span-1"
     >
-      <form onSubmit={addExpense} className="mb-4 grid grid-cols-12 gap-2">
-        <div className="col-span-3">
+      <form onSubmit={addExpense} className={`mb-4 grid ${isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-12 gap-2'}`}>
+        <div className={isMobile ? 'w-full' : 'col-span-3'}>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <DollarSign size={16} className="text-muted-foreground" />
@@ -113,7 +116,7 @@ const ExpenseTracker = () => {
             />
           </div>
         </div>
-        <div className="col-span-3">
+        <div className={isMobile ? 'w-full' : 'col-span-3'}>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -124,7 +127,7 @@ const ExpenseTracker = () => {
             ))}
           </select>
         </div>
-        <div className="col-span-4">
+        <div className={isMobile ? 'w-full' : 'col-span-4'}>
           <input
             type="text"
             value={description}
@@ -133,29 +136,31 @@ const ExpenseTracker = () => {
             className="w-full px-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
           />
         </div>
-        <div className="col-span-2">
-          <button
+        <div className={isMobile ? 'w-full' : 'col-span-2'}>
+          <Button
             type="submit"
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg transition-colors duration-200 focus-ring flex items-center justify-center"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors duration-200"
+            variant="default"
           >
             <Plus size={20} />
-          </button>
+            {isMobile && <span className="ml-2">Add Expense</span>}
+          </Button>
         </div>
       </form>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="border border-border rounded-lg p-4 bg-white/80 dark:bg-gray-700/50">
+        <div className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'} mb-4 gap-4`}>
+          <div className="border border-border rounded-lg p-4 bg-white/80 dark:bg-gray-700/50 w-full">
             <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Spending</h3>
             <p className="text-2xl font-semibold">{formatCurrency(totalExpenses)}</p>
           </div>
           
-          <div className="flex items-center">
-            <label className="mr-2 text-sm font-medium">Currency:</label>
+          <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} w-full`}>
+            <label className={`${isMobile ? 'mb-2' : 'mr-2'} text-sm font-medium`}>Currency:</label>
             <select
               value={currencyCode}
               onChange={(e) => setCurrencyCode(e.target.value)}
-              className="px-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              className="px-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary w-full"
             >
               {CURRENCIES.map(curr => (
                 <option key={curr.code} value={curr.code}>
@@ -168,19 +173,23 @@ const ExpenseTracker = () => {
 
         {/* Chart Section */}
         {categoryTotals.length > 0 ? (
-          <div className="border border-border rounded-lg p-4 bg-white/80 dark:bg-gray-700/50 h-[200px]">
+          <div className="border border-border rounded-lg p-4 bg-white/80 dark:bg-gray-700/50 h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={categoryTotals}>
+              <BarChart data={categoryTotals} margin={isMobile ? { top: 5, right: 5, bottom: 20, left: 5 } : {}}>
                 <XAxis 
                   dataKey="category" 
                   tickFormatter={(value) => value.split(' ')[0]}
                   fontSize={12}
                   stroke="#888888"
+                  angle={isMobile ? -45 : 0}
+                  textAnchor={isMobile ? "end" : "middle"}
+                  height={60}
                 />
                 <YAxis 
                   tickFormatter={(value) => `${currentCurrency.symbol}${value}`}
                   fontSize={12}
                   stroke="#888888"
+                  width={isMobile ? 40 : 60}
                 />
                 <Tooltip 
                   formatter={(value) => [formatCurrency(value as number), 'Total']}
@@ -204,14 +213,14 @@ const ExpenseTracker = () => {
         {/* Recent Expenses */}
         <div>
           <h3 className="font-medium mb-2">Recent Expenses</h3>
-          <ScrollArea className="h-[200px] rounded-md border border-border bg-white/80 dark:bg-gray-700/50">
+          <ScrollArea className="h-[250px] rounded-md border border-border bg-white/80 dark:bg-gray-700/50">
             <div className="space-y-2 p-4">
               {expenses.length === 0 ? (
                 <p className="text-center py-4 text-muted-foreground">
                   No expenses yet. Add some expenses to get started!
                 </p>
               ) : (
-                expenses.slice(0, 5).map(expense => (
+                expenses.map(expense => (
                   <div 
                     key={expense.id}
                     className="px-4 py-3 rounded-lg border border-border bg-white/80 dark:bg-gray-700/50 flex items-center justify-between"
@@ -224,13 +233,15 @@ const ExpenseTracker = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="font-medium">{formatCurrency(expense.amount)}</span>
-                      <button
+                      <Button
                         onClick={() => deleteExpense(expense.id)}
-                        className="text-muted-foreground hover:text-destructive focus-ring rounded"
+                        className="text-muted-foreground hover:text-destructive focus-ring rounded p-1"
+                        variant="ghost"
+                        size="sm"
                         aria-label="Delete expense"
                       >
                         <Trash2 size={16} />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))
