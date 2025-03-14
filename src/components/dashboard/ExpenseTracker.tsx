@@ -37,7 +37,7 @@ const ExpenseTracker = () => {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [description, setDescription] = useState('');
-  const [currencyCode, setCurrencyCode] = useLocalStorage('focusflow-currency', 'USD');
+  const [currencyCode, setCurrencyCode] = useLocalStorage<string>('focusflow-currency', 'USD');
   
   const currentCurrency = CURRENCIES.find(c => c.code === currencyCode) || CURRENCIES[0];
 
@@ -80,9 +80,12 @@ const ExpenseTracker = () => {
   }).filter(item => item.total > 0);
 
   const formatCurrency = (value: number) => {
+    // Ensure currencyCode is a string, not an object
+    const code = typeof currencyCode === 'string' ? currencyCode : 'USD';
+    
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currencyCode,
+      currency: code,
       minimumFractionDigits: 2
     }).format(value);
   };
