@@ -1,12 +1,11 @@
-
 export interface Task {
   id: string;
   title: string;
-  description?: string;
+  description: string;
   completed: boolean;
   priority: 'low' | 'medium' | 'high';
-  dueDate?: Date;
   createdAt: Date;
+  dueDate?: Date;
 }
 
 export interface Note {
@@ -24,6 +23,7 @@ export interface Expense {
   category: string;
   description: string;
   date: Date;
+  currency?: string;
 }
 
 export interface Habit {

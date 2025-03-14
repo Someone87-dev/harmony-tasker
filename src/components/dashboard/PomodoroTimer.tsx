@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Clock, Play, Pause, SkipForward, Settings as SettingsIcon } from 'lucide-react';
 import DashboardCard from '../ui/DashboardCard';
@@ -157,7 +158,7 @@ const PomodoroTimer = () => {
       className="col-span-2 md:col-span-1"
     >
       {showSettings ? (
-        <div className="space-y-4">
+        <div className="space-y-4 bg-white/80 dark:bg-gray-700/50 p-4 rounded-lg border border-border">
           <h3 className="font-medium">Timer Settings</h3>
           
           <div className="grid grid-cols-2 gap-4">
@@ -174,7 +175,7 @@ const PomodoroTimer = () => {
                   ...settingsForm,
                   workDuration: parseInt(e.target.value) || 25
                 })}
-                className="w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                className="w-full px-3 py-2 bg-white/80 dark:bg-gray-800/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               />
             </div>
             
@@ -191,7 +192,7 @@ const PomodoroTimer = () => {
                   ...settingsForm,
                   breakDuration: parseInt(e.target.value) || 5
                 })}
-                className="w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                className="w-full px-3 py-2 bg-white/80 dark:bg-gray-800/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               />
             </div>
             
@@ -208,7 +209,7 @@ const PomodoroTimer = () => {
                   ...settingsForm,
                   longBreakDuration: parseInt(e.target.value) || 15
                 })}
-                className="w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                className="w-full px-3 py-2 bg-white/80 dark:bg-gray-800/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               />
             </div>
             
@@ -225,7 +226,7 @@ const PomodoroTimer = () => {
                   ...settingsForm,
                   sessionsBeforeLongBreak: parseInt(e.target.value) || 4
                 })}
-                className="w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                className="w-full px-3 py-2 bg-white/80 dark:bg-gray-800/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               />
             </div>
           </div>
@@ -233,22 +234,22 @@ const PomodoroTimer = () => {
           <div className="flex justify-end space-x-2 pt-2">
             <button
               onClick={() => setShowSettings(false)}
-              className="px-4 py-2 bg-secondary hover:bg-secondary/80 text-foreground rounded-lg transition-colors duration-200 focus-ring"
+              className="px-4 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg transition-colors duration-200 focus-ring border border-border"
             >
               Cancel
             </button>
             <button
               onClick={saveSettings}
-              className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors duration-200 focus-ring"
+              className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors duration-200 focus-ring"
             >
               Save
             </button>
           </div>
         </div>
       ) : (
-        <div className="text-center">
+        <div className="text-center bg-white/80 dark:bg-gray-700/50 p-6 rounded-lg border border-border">
           <div className="relative inline-block w-48 h-48 mb-4">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br opacity-10 from-gray-200 to-gray-300" />
+            <div className="absolute inset-0 rounded-full bg-secondary/30" />
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
               <circle
@@ -285,7 +286,9 @@ const PomodoroTimer = () => {
                 </div>
                 <div className={cn(
                   "text-xs font-medium uppercase tracking-wider mt-1",
-                  mode === 'work' ? "text-blue-500" : mode === 'break' ? "text-teal-500" : "text-amber-500"
+                  mode === 'work' ? "text-blue-500 dark:text-blue-400" : 
+                  mode === 'break' ? "text-teal-500 dark:text-teal-400" : 
+                  "text-amber-500 dark:text-amber-400"
                 )}>
                   {mode === 'work' ? 'Focus' : mode === 'break' ? 'Short Break' : 'Long Break'}
                 </div>
@@ -297,8 +300,10 @@ const PomodoroTimer = () => {
             <button
               onClick={toggleTimer}
               className={cn(
-                "w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br text-white shadow-md transition-transform duration-200 hover:scale-105 focus-ring",
-                "from-blue-500 to-indigo-600"
+                "w-12 h-12 flex items-center justify-center rounded-full shadow-md transition-transform duration-200 hover:scale-105 focus-ring text-white",
+                mode === 'work' ? "bg-gradient-to-br from-blue-500 to-indigo-600" :
+                mode === 'break' ? "bg-gradient-to-br from-teal-500 to-green-500" :
+                "bg-gradient-to-br from-amber-500 to-yellow-500"
               )}
               aria-label={isRunning ? 'Pause timer' : 'Start timer'}
             >
@@ -307,7 +312,7 @@ const PomodoroTimer = () => {
             
             <button
               onClick={skipToNext}
-              className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-border shadow-sm text-foreground transition-colors duration-200 hover:bg-secondary focus-ring"
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-gray-800 border border-border shadow-sm text-foreground transition-colors duration-200 hover:bg-secondary focus-ring"
               aria-label="Skip to next"
             >
               <SkipForward size={20} />

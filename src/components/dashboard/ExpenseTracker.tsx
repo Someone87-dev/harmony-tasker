@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { BarChart4, Plus, Trash2 } from 'lucide-react';
+import { BarChart4, Plus, Trash2, DollarSign } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import DashboardCard from '../ui/DashboardCard';
 import useLocalStorage from '@/hooks/useLocalStorage';
@@ -21,11 +21,24 @@ const COLORS = [
   '#8b5cf6', '#06b6d4', '#6b7280'
 ];
 
+const CURRENCIES = [
+  { code: 'USD', symbol: '$' },
+  { code: 'EUR', symbol: '€' },
+  { code: 'GBP', symbol: '£' },
+  { code: 'JPY', symbol: '¥' },
+  { code: 'INR', symbol: '₹' },
+  { code: 'CAD', symbol: 'C$' },
+  { code: 'AUD', symbol: 'A$' },
+];
+
 const ExpenseTracker = () => {
   const [expenses, setExpenses] = useLocalStorage<Expense[]>('focusflow-expenses', []);
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [description, setDescription] = useState('');
+  const [currency, setCurrency] = useLocalStorage('focusflow-currency', CURRENCIES[0].code);
+  
+  const currentCurrency = CURRENCIES.find(c => c.code === currency) || CURRENCIES[0];
 
   const addExpense = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +52,7 @@ const ExpenseTracker = () => {
       category,
       description,
       date: new Date(),
+      currency
     };
     
     setExpenses([newExpense, ...expenses]);
@@ -67,7 +81,7 @@ const ExpenseTracker = () => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: currency,
       minimumFractionDigits: 2
     }).format(value);
   };
@@ -80,21 +94,26 @@ const ExpenseTracker = () => {
     >
       <form onSubmit={addExpense} className="mb-4 grid grid-cols-12 gap-2">
         <div className="col-span-3">
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Amount"
-            min="0.01"
-            step="0.01"
-            className="w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <DollarSign size={16} className="text-muted-foreground" />
+            </div>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Amount"
+              min="0.01"
+              step="0.01"
+              className="w-full pl-9 pr-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+            />
+          </div>
         </div>
         <div className="col-span-3">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
           >
             {CATEGORIES.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
@@ -107,13 +126,13 @@ const ExpenseTracker = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
-            className="w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
           />
         </div>
         <div className="col-span-2">
           <button
             type="submit"
-            className="w-full bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors duration-200 focus-ring flex items-center justify-center"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg transition-colors duration-200 focus-ring flex items-center justify-center"
           >
             <Plus size={20} />
           </button>
@@ -121,28 +140,48 @@ const ExpenseTracker = () => {
       </form>
 
       <div className="space-y-4">
-        <div className="border border-border rounded-lg p-4 bg-white/50">
-          <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Spending</h3>
-          <p className="text-2xl font-semibold">{formatCurrency(totalExpenses)}</p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="border border-border rounded-lg p-4 bg-white/80 dark:bg-gray-700/50">
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Spending</h3>
+            <p className="text-2xl font-semibold">{formatCurrency(totalExpenses)}</p>
+          </div>
+          
+          <div className="flex items-center">
+            <label className="mr-2 text-sm font-medium">Currency:</label>
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="px-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+            >
+              {CURRENCIES.map(curr => (
+                <option key={curr.code} value={curr.code}>
+                  {curr.code} ({curr.symbol})
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Chart Section */}
         {categoryTotals.length > 0 ? (
-          <div className="border border-border rounded-lg p-4 bg-white/50 h-[200px]">
+          <div className="border border-border rounded-lg p-4 bg-white/80 dark:bg-gray-700/50 h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={categoryTotals}>
                 <XAxis 
                   dataKey="category" 
                   tickFormatter={(value) => value.split(' ')[0]}
                   fontSize={12}
+                  stroke="#888888"
                 />
                 <YAxis 
-                  tickFormatter={(value) => `$${value}`}
+                  tickFormatter={(value) => `${currentCurrency.symbol}${value}`}
                   fontSize={12}
+                  stroke="#888888"
                 />
                 <Tooltip 
                   formatter={(value) => [formatCurrency(value as number), 'Total']}
                   labelFormatter={(label) => `Category: ${label}`}
+                  contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#ddd' }}
                 />
                 <Bar dataKey="total" radius={[4, 4, 0, 0]}>
                   {categoryTotals.map((entry, index) => (
@@ -153,7 +192,7 @@ const ExpenseTracker = () => {
             </ResponsiveContainer>
           </div>
         ) : (
-          <div className="border border-border rounded-lg p-8 bg-white/50 text-center text-muted-foreground">
+          <div className="border border-border rounded-lg p-8 bg-white/80 dark:bg-gray-700/50 text-center text-muted-foreground">
             No expense data to display yet
           </div>
         )}
@@ -170,7 +209,7 @@ const ExpenseTracker = () => {
               expenses.slice(0, 5).map(expense => (
                 <div 
                   key={expense.id}
-                  className="px-4 py-3 rounded-lg border border-border bg-white flex items-center justify-between"
+                  className="px-4 py-3 rounded-lg border border-border bg-white/80 dark:bg-gray-700/50 flex items-center justify-between"
                 >
                   <div>
                     <p className="font-medium">{expense.description || expense.category}</p>

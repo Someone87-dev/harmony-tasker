@@ -87,7 +87,7 @@ const Notes = () => {
       icon={<FileText />}
       className="col-span-2 row-span-2"
     >
-      <div className="flex h-[500px] gap-4">
+      <div className="flex h-[500px] gap-4 bg-white/80 dark:bg-gray-700/50 p-4 rounded-lg border border-border">
         <div className="w-1/3 border-r border-border/50 pr-4">
           <div className="mb-3 flex">
             <div className="relative flex-1">
@@ -97,12 +97,12 @@ const Notes = () => {
                 placeholder="Search notes..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                className="w-full pl-9 pr-3 py-2 bg-white/90 dark:bg-gray-800/60 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               />
             </div>
             <button
               onClick={() => setShowAddNote(true)}
-              className="ml-2 bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-colors duration-200 focus-ring"
+              className="ml-2 bg-primary hover:bg-primary/90 text-primary-foreground p-2 rounded-lg transition-colors duration-200 focus-ring"
               aria-label="Add note"
             >
               <Plus size={20} />
@@ -120,8 +120,10 @@ const Notes = () => {
                   key={note.id}
                   className={cn(
                     "px-4 py-3 rounded-lg border cursor-pointer group",
-                    activeNote?.id === note.id ? "border-primary bg-primary/5" : "border-border bg-white hover:border-primary/50",
-                    note.pinned && "border-amber-200 bg-amber-50/50"
+                    activeNote?.id === note.id 
+                      ? "border-primary bg-primary/10 dark:bg-primary/20" 
+                      : "border-border bg-white/90 dark:bg-gray-800/40 hover:border-primary/50",
+                    note.pinned && "border-amber-200 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-900/20"
                   )}
                   onClick={() => setActiveNote(note)}
                 >
@@ -168,24 +170,24 @@ const Notes = () => {
                 placeholder="Note title..."
                 value={newNoteTitle}
                 onChange={(e) => setNewNoteTitle(e.target.value)}
-                className="w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary mb-2"
+                className="w-full px-3 py-2 bg-white/90 dark:bg-gray-800/60 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary mb-2"
               />
               <textarea
                 placeholder="Write your note here..."
                 value={newNoteContent}
                 onChange={(e) => setNewNoteContent(e.target.value)}
-                className="flex-1 w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary mb-2 resize-none"
+                className="flex-1 w-full px-3 py-2 bg-white/90 dark:bg-gray-800/60 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary mb-2 resize-none"
               />
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setShowAddNote(false)}
-                  className="px-4 py-2 bg-secondary hover:bg-secondary/80 text-foreground rounded-lg transition-colors duration-200 focus-ring"
+                  className="px-4 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg transition-colors duration-200 focus-ring border border-border"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddNote}
-                  className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors duration-200 focus-ring"
+                  className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors duration-200 focus-ring"
                 >
                   Save
                 </button>
@@ -200,7 +202,7 @@ const Notes = () => {
               <textarea
                 value={activeNote.content}
                 onChange={(e) => handleUpdateNote(e.target.value)}
-                className="flex-1 w-full px-3 py-2 bg-white/50 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none"
+                className="flex-1 w-full px-3 py-2 bg-white/90 dark:bg-gray-800/60 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none"
               />
             </div>
           ) : (

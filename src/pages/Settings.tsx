@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '@/components/Sidebar';
-import { Sun, Moon, User, Settings as SettingsIcon, Save, RefreshCw } from 'lucide-react';
+import { Sun, Moon, User, Settings as SettingsIcon, Save, RefreshCw, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,8 @@ const Settings = () => {
   const [email, setEmail] = useState(user?.email || '');
   const [bio, setBio] = useState(user?.bio || '');
   const [avatar, setAvatar] = useState(user?.avatar || 'https://i.pravatar.cc/150?img=8');
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Apply theme to the document
@@ -25,6 +27,21 @@ const Settings = () => {
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const saveProfile = () => {
@@ -48,6 +65,8 @@ const Settings = () => {
       localStorage.removeItem('focusflow-notes');
       localStorage.removeItem('focusflow-expenses');
       localStorage.removeItem('focusflow-habits');
+      localStorage.removeItem('focusflow-pomodoro-settings');
+      localStorage.removeItem('focusflow-currency');
       
       toast({
         title: "Data Reset",
@@ -74,7 +93,7 @@ const Settings = () => {
           
           <div className="space-y-10 animate-fade-in">
             {/* User Profile */}
-            <section className="glass-card rounded-xl overflow-hidden p-6 border border-border bg-white/50">
+            <section className="glass-card rounded-xl overflow-hidden p-6 border border-border bg-white/50 dark:bg-gray-800/50">
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
                 <User className="h-5 w-5" />
                 User Profile
@@ -83,13 +102,27 @@ const Settings = () => {
               
               <div className="flex flex-col md:flex-row gap-8">
                 <div className="flex-shrink-0">
-                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20">
+                  <div
+                    className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 relative group cursor-pointer"
+                    onClick={handleAvatarClick}
+                  >
                     <img 
                       src={avatar} 
                       alt="User avatar" 
                       className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <Upload className="h-8 w-8 text-white" />
+                    </div>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      accept="image/*" 
+                      onChange={handleFileChange} 
+                      className="hidden"
+                    />
                   </div>
+                  <p className="text-xs text-muted-foreground text-center mt-2">Click to upload avatar</p>
                 </div>
                 
                 <div className="flex-grow space-y-4">
@@ -101,7 +134,7 @@ const Settings = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="focus-ring"
+                      className="focus-ring bg-white/80 dark:bg-gray-700/50"
                     />
                   </div>
                   
@@ -113,7 +146,7 @@ const Settings = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="focus-ring"
+                      className="focus-ring bg-white/80 dark:bg-gray-700/50"
                     />
                   </div>
                   
@@ -124,7 +157,7 @@ const Settings = () => {
                     <Textarea 
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
-                      className="focus-ring resize-none"
+                      className="focus-ring resize-none bg-white/80 dark:bg-gray-700/50"
                       rows={3}
                     />
                   </div>
@@ -138,7 +171,7 @@ const Settings = () => {
             </section>
             
             {/* Appearance */}
-            <section className="glass-card rounded-xl overflow-hidden p-6 border border-border bg-white/50">
+            <section className="glass-card rounded-xl overflow-hidden p-6 border border-border bg-white/50 dark:bg-gray-800/50">
               <h2 className="text-2xl font-semibold mb-4">Appearance</h2>
               <Separator className="mb-6" />
               
@@ -155,7 +188,7 @@ const Settings = () => {
                     onClick={toggleTheme} 
                     variant="outline" 
                     size="icon" 
-                    className="h-10 w-10"
+                    className="h-10 w-10 border-primary/20 bg-white/80 dark:bg-gray-700/50"
                   >
                     {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                   </Button>
@@ -164,7 +197,7 @@ const Settings = () => {
             </section>
             
             {/* Data Management */}
-            <section className="glass-card rounded-xl overflow-hidden p-6 border border-border bg-white/50">
+            <section className="glass-card rounded-xl overflow-hidden p-6 border border-border bg-white/50 dark:bg-gray-800/50">
               <h2 className="text-2xl font-semibold mb-4">Data Management</h2>
               <Separator className="mb-6" />
               

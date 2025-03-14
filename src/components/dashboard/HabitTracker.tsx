@@ -136,20 +136,20 @@ const HabitTracker = () => {
             value={newHabitName}
             onChange={(e) => setNewHabitName(e.target.value)}
             placeholder="Add a new habit..."
-            className="w-full px-3 py-2 bg-white/50 border border-border rounded-l-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 bg-white/80 dark:bg-gray-700/50 border border-border rounded-l-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
           />
         </div>
         <select
           value={frequency}
           onChange={(e) => setFrequency(e.target.value as 'daily' | 'weekly')}
-          className="px-2 py-2 bg-white/50 border-y border-r-0 border-l-0 border-border focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+          className="px-2 py-2 bg-white/80 dark:bg-gray-700/50 border-y border-r-0 border-l-0 border-border focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
         </select>
         <button
           type="submit"
-          className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-r-lg transition-colors duration-200 focus-ring"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-r-lg transition-colors duration-200 focus-ring"
           aria-label="Add habit"
         >
           <Plus size={20} />
@@ -171,14 +171,18 @@ const HabitTracker = () => {
                 key={habit.id}
                 className={cn(
                   "p-4 rounded-lg border flex items-start gap-3 transition-all duration-200",
-                  completed ? "bg-primary/5 border-primary/20" : "bg-white border-border"
+                  completed 
+                    ? "bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30" 
+                    : "bg-white/80 dark:bg-gray-700/50 border-border"
                 )}
               >
                 <button
                   onClick={() => toggleHabitCompletion(habit.id)}
                   className={cn(
                     "mt-0.5 h-6 w-6 flex items-center justify-center rounded-full border transition-colors duration-200 focus-ring",
-                    completed ? "bg-primary border-primary text-white" : "border-muted-foreground"
+                    completed 
+                      ? "bg-primary border-primary text-primary-foreground" 
+                      : "border-muted-foreground bg-white/80 dark:bg-gray-700/50"
                   )}
                   aria-label={completed ? "Mark as incomplete" : "Mark as complete"}
                 >
@@ -204,13 +208,13 @@ const HabitTracker = () => {
                   </div>
                   
                   <div className="flex items-center mt-2 space-x-2">
-                    <div className="text-xs bg-secondary/70 text-foreground px-2 py-1 rounded-full flex items-center gap-1">
+                    <div className="text-xs bg-secondary/70 dark:bg-secondary/50 text-foreground px-2 py-1 rounded-full flex items-center gap-1">
                       <CalendarCheck2 size={12} />
                       <span>{habit.completedDates.length} completions</span>
                     </div>
                     
                     {streak > 0 && (
-                      <div className="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-full flex items-center gap-1">
+                      <div className="text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-1 rounded-full flex items-center gap-1 border border-amber-200 dark:border-amber-800">
                         <Swords size={12} />
                         <span>{streak} day streak</span>
                       </div>
