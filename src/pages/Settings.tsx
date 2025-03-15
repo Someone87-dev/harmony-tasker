@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from "@/components/ui/use-toast";
 import useLocalStorage from '@/hooks/useLocalStorage';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const Settings = () => {
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'light');
@@ -75,6 +76,14 @@ const Settings = () => {
     }
   };
 
+  // Generate initials for avatar fallback
+  const getInitials = () => {
+    if (name) {
+      return name.split(' ').map(part => part[0]).join('').toUpperCase();
+    }
+    return 'U';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
@@ -106,11 +115,12 @@ const Settings = () => {
                     className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 relative group cursor-pointer"
                     onClick={handleAvatarClick}
                   >
-                    <img 
-                      src={avatar} 
-                      alt="User avatar" 
-                      className="w-full h-full object-cover"
-                    />
+                    <Avatar className="w-full h-full">
+                      <AvatarImage src={avatar} alt="User avatar" className="w-full h-full object-cover" />
+                      <AvatarFallback className="text-3xl bg-primary/10 text-primary w-full h-full">
+                        {getInitials()}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <Upload className="h-8 w-8 text-white" />
                     </div>
